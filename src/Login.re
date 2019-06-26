@@ -1,9 +1,22 @@
 [%bs.raw {|require('./Login.css')|}];
 
+type loginError =
+  | EMAIL_NOT_FOUND
+  | INVALID_PASSWORD
+  | OTHER;
+
+let stringToLoginError = str =>
+  switch (str) {
+  | "EMAIL_NOT_FOUND" => Some(EMAIL_NOT_FOUND)
+  | "INVALID_PASSWORD" => Some(INVALID_PASSWORD)
+  | _ => Some(OTHER)
+  };
+
 [@react.component]
 let make = () => {
   let (email, setEmail) = React.useState(() => "");
   let (password, setPassword) = React.useState(() => "");
+  let (error, setError) = React.useState(() => None);
 
   let handleEmailChange = e => e->ReactEvent.Form.target##value |> setEmail;
   let handlePasswordChange = e =>
@@ -25,6 +38,13 @@ let make = () => {
           onChange=handleEmailChange
           required=true
         />
+        {switch (error) {
+         | Some(EMAIL_NOT_FOUND) =>
+           <div className="error">
+             {{js| ⚠  Email not found |js} |> ReasonReact.string}
+           </div>
+         | _ => ReasonReact.null
+         }}
       </div>
       <div className="inputField">
         <input
@@ -34,6 +54,13 @@ let make = () => {
           onChange=handlePasswordChange
           required=true
         />
+        {switch (error) {
+         | Some(INVALID_PASSWORD) =>
+           <div className="error">
+             {{js| ⚠ Invalid password |js} |> ReasonReact.string}
+           </div>
+         | _ => ReasonReact.null
+         }}
       </div>
       <Button title="Login" category=Button.PRIMARY>
         {"Login" |> ReasonReact.string}

@@ -15,6 +15,7 @@
   ],
   "suffix": ".bs.js",
   "namespace": true,
-  "bs-dependencies": ["reason-react"],
+  "bs-dependencies": ["reason-react", "bs-fetch", "@ryb73/decco"],
+  "ppx-flags": ["@ryb73/decco/ppx/ppx_decco.sh"],
   "refmt": 3
 }

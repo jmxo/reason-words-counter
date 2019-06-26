@@ -16,6 +16,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@ryb73/decco": "^0.0.14",
+    "bs-fetch": "^0.5.0",
+    "bs-jest": "^0.3.2",
     "react": "^16.8.1",
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.8.1",
