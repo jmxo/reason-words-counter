@@ -1,6 +1,7 @@
+exception PostError(string);
+
 [@decco]
 type error = {message: string};
-
 
 [@decco]
 type response = {error: option(error)};
@@ -19,11 +20,12 @@ let post = (url, payload) => {
       ),
     )
     |> then_(Fetch.Response.json)
-    |> then_(response => {
-      switch(response_decode(response)) {
-        | Belt.Result.Ok({error: Some({message})}) => reject(PostError(message))
-        | response => resolve(response)
-      }
-    })
+    |> then_(response =>
+         switch (response_decode(response)) {
+         | Belt.Result.Ok({error: Some({message})}) =>
+           reject(PostError(message))
+         | response => resolve(response)
+         }
+       )
   );
 };

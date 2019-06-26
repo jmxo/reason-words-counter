@@ -1,4 +1,8 @@
+[@bs.val] external alert: string => unit = "alert";
+
 [%bs.raw {|require('./Login.css')|}];
+
+let loginUrl = "some/url";
 
 type loginError =
   | EMAIL_NOT_FOUND
@@ -22,9 +26,41 @@ let make = () => {
   let handlePasswordChange = e =>
     e->ReactEvent.Form.target##value |> setPassword;
 
+  let handlePromiseFailure =
+    [@bs.open]
+    (
+      fun
+      | Request.PostError(err) => {
+          err;
+        }
+    );
+
   let handleFormSubmit = e => {
-    e->ReactEvent.Form.preventDefault;
-    // TODO
+    ReactEvent.Form.preventDefault(e);
+    let payload = Js.Dict.empty();
+    Js.Dict.set(payload, "email", Js.Json.string(email));
+    Js.Dict.set(payload, "password", Js.Json.string(password));
+
+    Js.Promise.(
+      Request.post(loginUrl, payload)
+      |> then_(_res =>
+           {
+             alert("Login successful!");
+             setError(_ => None);
+           }
+           |> resolve
+         )
+      |> catch(e =>
+           (
+             switch (handlePromiseFailure(e)) {
+             | Some(err) => setError(_ => stringToLoginError(err))
+             | None => setError(_ => None)
+             }
+           )
+           |> resolve
+         )
+      |> ignore
+    );
   };
 
   <div className="Login">
